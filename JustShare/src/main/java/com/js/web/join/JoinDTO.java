@@ -6,6 +6,6 @@ import lombok.Data;
 public class JoinDTO {
 
 	private int mno, mgrade;
-	private String mid, mpw,mname,addr, mbirth,mphone,memail,mjoindate ;
+	private String mid, mpw,mname,maddr, mbirth,mphone,memail,mjoindate ;
 	
 }

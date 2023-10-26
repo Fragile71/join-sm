@@ -2,15 +2,145 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>    
-    
+  
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
+    <link rel="stylesheet" href="./css/join.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+	
+	<script type="text/javascript">
+	
+	  $(function() {
+
+	      let isIdChecked = false; // 아이디 중복 검사 여부를 나타내는 변수
+	      $("#idCheck").click(function() {
+	               let mid = $("#mid").val();
+	
+	               if (mid == "" || mid.length < 3) {
+	                  $("#resultMSG").text("아이디는 3글자 이상이어야 합니다.");
+	                  $("#resultMSG").css("font-weight", "bold");
+	                  $("#resultMSG").css("font-size", "15pt");
+	               } else {
+	                  $.ajax({
+	                     url : "./checkID",
+	                     type : "post",
+	                     data : {
+	                        "mid" : mid
+	                     },
+	                     dataType : "json",
+	                     success : function(data) {
+	                        if (data == 1) {
+	                           $("#resultMSG").css("color", "red").text("이미 등록된 아이디입니다.");
+	                           isIdChecked = false;
+	                        } else {
+	                           $("#resultMSG").css("color", "greed").text("가입할 수 있습니다.");
+	                           isIdChecked = true;
+	                        }
+	                     },
+	                     error : function(request, status, error) {
+	                        $("#resultMSG").text("실패시 결과값 : " + error);
+	                     }
+	                  });
+	               }
+	               return false;
+	            });
+	
+	      $("#pw2").on('input', function() {
+	         let pw1 = $("#pw1").val();
+	         let pw2 = $(this).val();
+	
+	         if (pw1 == pw2) {
+	            $("#pwresultForm").css("color","green").text("비밀번호가 일치합니다.");
+	            return;
+	         } else {
+	            $("#pwresultForm").css("color","red").text("비밀번호가 일치하지 않습니다.");
+	         }
+	      });
+	      
+	      $("#joinjoin").click(function(){
+	         let mid = $("#mid").val();
+	         let pw1 = $("#pw1").val();
+	         let pw2 = $("#pw2").val();
+	         let mname = $("#mname").val();
+	         let mphone = $("#mphone").val();
+	         let mbrith = $("#mbrith").val();
+	         
+	          if (!isIdChecked) {
+	             Swal.fire("아이디 중복 검사를 실행하세요.");
+	              return false; // 회원가입 종료
+	           }
+	         if (pw1 != pw2) {
+	            Swal.fire("비밀번호를 확인하세요.");
+	            return false;
+	         }
+	         if (mname.length > 4 || mname.length == "" || mname.length <= 1) {
+	            Swal.fire("이름을 정확히 입력해주세요.");
+	            return false;
+	         }
+	         if (mphone.length != 11) {
+	            Swal.fire("핸드폰 번호 11자리를 정확히 입력해주세요.");
+	            return false;
+	         }
+	       if (mbrith.length < 10 ) {
+	            Swal.fire("생년월일을 정확히 입력해주세요.");
+	            return false; 
+	         
+	       
+	       
+	       }
+	       
+	       
+	       // 메일주소검사
+	     	let option = $("#selectBox option:selected").val();      // 선택한 메일주소값 뽑아내기
+	     	
+	     	if(option != "-선택-"){
+	     		
+		     // gogus228
+				let Fmail = $(this).parent('div').siblings(".emailBox").children("#memail").val();
+				//alert(Fmail);   
+				
+				if(Fmail != null && Fmail != ""){
+					// hanmail   net
+					let items = option.slice(1).split(".");	
+					let first = items[0];	// hanmail
+					let second = items[1];	// net
+					
+					// 메일주소 앞부분 입력값검사
+					let replaceKorean = /[ㄱ-ㅎㅏ-ㅣ]/gi;
+					let replaceChar = /[~!@\#$%^&*\()\-=+_'\;<>\/.\`:\"\\,\[\]?|{}]/gi;
+				
+					if(Fmail.match(replaceKorean) || Fmail.match(replaceChar)){
+						Fmail = Fmail.replace(replaceKorean, "").replace(replaceChar, "");
+						Swal.fire("올바른 메일주소를 입력해주세요")
+						$("#memail").val("");
+						$("#Opt").prop("selected", true);
+						return false; 
+					}
+					
+					let Final = Fmail + "@" + first + "." + second;
+					console.log(Final);	// gogus228@gmail.com
+					let memail = $("#memailF").val(Final);
+				 else {
+					Swal.fire("올바른 메일주소를 입력해주세요");
+					return false; 
+				} 
+			
+	     	} else {
+				Swal.fire("올바른 메일주소를 입력해주세요");
+				return false; 
+	     }	
+		
+	  	});
+	       
+	 });
+	
+	</script>
 <body>
-<!--  <form id="myForm" action="./join" method="post"> -->
+  <form id="myForm" action="./join" method="post"> 
       <div class="join-div" align="center">
          <div>
             <h1>회원가입<br></h1>
@@ -88,7 +218,7 @@
                	</div>
 
       </div>
-<!--    </form> -->
+  </form>
 
 
 

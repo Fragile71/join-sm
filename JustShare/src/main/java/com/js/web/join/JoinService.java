@@ -13,7 +13,9 @@ public class JoinService {
 		return joinDAO.join(joinDTO);
 	}
 
-	
+	public int checkID(String mid) {
+		return joinDAO.checkID(mid);
+	}
 	
 	
 }
